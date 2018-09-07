@@ -1,0 +1,145 @@
+*0907쪽지시험(상속)
+
+
+1. Inheritance(상속)이란?
+	: 부모의 모든 속성과 메소드를 내 것처럼 사용할 수 있다.(private요소, 생성자 제외)
+	
+	class Super{
+	   속성+메소드;
+	}
+	class Sub extends Super{
+	  
+	}
+
+	이유 :  코드 재사용하여 간결하게 만듦
+		여러 개의 클래스가 공통의 속성과 메소드가 있다면
+		별도의 클래스로 만들어 놓고 여러 개의 클래스가 상속받아서
+		재사용하고 각각의 자식클래스에서는 각 클래스가 고유하게 가져야하는 속성이나 메소드만 정의한다.
+	: 자바의 모든 클래스는 Object 상속
+		class Object{
+		   속성 + 메소드;
+		}
+
+
+
+2.Polymorphism(다형성)이란?
+
+	:하나의 변수에 다 담을 수 있다.
+	:반드시 상속관계일 때만
+	 Sub extends Super{} 일 때 Sub.Sub is a Super 성립된다.
+	
+		Sub s=new Sub();
+		Super sp = new Sub();  //다형성
+
+	:다형성의 종류
+
+	class Car{}
+		class Ef extends Car{}
+		class Ex extends Car{}
+		class Carnival extends Car{}
+		
+		1) 매개변수를 이용한 다형성
+			public void engineer(Car cd){//Car,Ef,Ex,Carnival...
+			     //cd라는 변수를 이용해서 Car영역만 접근가능 - 단점
+				:ObjectDownCasting 필요(하지만 무조건 하나로 형변환하면 다른 게 들어왔을 때 형변환 불가능)
+				:if(cd instance of 데이터타입){} 사용권장    //cd변수가 이 데이터타입이냐
+			}
+			
+
+			*java API 를 보면
+			 public void 메소드이름(Object obj){ //자바의 모든 객체를 허용한다.
+			 }
+			 
+
+		2) 필드를 이용한 다형성 : 변수 하나에 여러 객체 다 담김
+			Class Test{
+			   Car cd;    //Car,Ef,Ex,Carnival......
+			}
+
+			외부에서
+			Test t = new Test();
+			t.cd = new Car();
+			t.cd = new Ef();
+			t.cd = new Ex();
+			t.cd = new Carnival();
+			
+			Object obj;  //자바의 모든 객체를 저장할 수 있다.
+		
+
+3.ObjectDownCating(형변환)이란?
+	: 반드시 상속 관계일 때 가능하다.
+
+	  class Parent{}
+	  class Child extends Parent{}
+
+	  Parent p = new Child();  //다형성이 성립되지만 Parent영역만 접근가능함
+	 
+	  if(p instanceof Child){
+	  Child ch = (Child) p ;  //ObjectDownCasting
+	  }
+
+
+	*주의사항(중요!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!어제 안 배움!!!!!!!!!!!!!!!!!!!!!!!!)
+ 	Parent p = new Parent();    //여기서 새로 생성된 Parent에는 Child가 존재하지 않음
+	Child ch = (Child) p : //컴파일은 성공하지만 실행할 때 ClasscastingException발생
+
+
+
+4. Overriding(재정의)란?
+	:반드시 상속관계일 때
+	 부모클래스에 정의되어있는 메소드 자식클래스에서 재정의한다.
+	 (이유 : 부모의 기능이 마음에 들지 않아 다른 기능으로 변경해서 사용)
+
+	  조건 : 접근제한자는 부모보다 크거나 같다.
+		(public > protected > 생략 > private)
+		 static, final, abstract, synchronized 제한자는 상관없다.
+
+		 리턴타입, 메소드이름, 인수 모두 동일하다.
+
+
+
+5. Object에 정의되어 있는 toString()메소드 하는 일?
+	: 객체의 주소값을 class이름@hashcode 형태로 만들어서 문자열로 리턴!!(출력 아님)
+	
+	*println(Object obj) or print(Object obj)는 인수로 객체가 전달되면
+	 자동의 obj.toString() 호출한다.
+	 결과적으로 출력되는 것을 toString() 리턴하는 문자를 출력해준다.
+
+
+
+6. String에 정의되어 있는 toString()메소드 하는 일?
+	:현재 객체의 문자열을 리턴한다.
+
+	class Test{
+	}
+	Test t = new Test();
+	System.out.println(t);  //t.toString()호출된다. - 주소값을 리턴하고 결과 출력
+
+	만약
+	  class Test{
+		//재정의
+		public String toString(){
+		   return "쉬고싶다";
+		}
+	  }
+	  System.out.println(t);  /t.toString()호출 - "쉬고싶다" 리턴되고 출력
+
+
+
+7. super.변수이름 : 자식 안에서 부모의 전역변수 호출
+   super.메소드이름(값...)  :  자식 안에서 부모의 메소드 호출
+   super(값...)  :  자식생성자 구현부 첫 줄에서 부모의 생성자 호출
+
+   this.변수이름 : 현재 객체의 전역변수
+   this.메소드이름(값...) : 현재 객체의 메소드
+   this(값...): 생성자 구현부 첫 줄에서 현재객체 다른 생성자 호출
+
+
+8. 상속 관계일 때 생성자의 개념
+	: 자식 클래스가 생성될 때 부모의 기본생성자 호출된다
+	  자식이 인수가 있는 생성자 형태로 생성되더라도 부모의 기본생성자는 필수로 필요로 한다
+	  즉, 모든 자식생성자 구현부 첫 줄에서 super(); 생략되어 있다
+
+	: 객체를 설계할 때 좀 더 확장성을 좋게 만들기 위해서는 
+	  생성자를 만들 때 기본생성자를 먼저 만들고 오버로딩하는 것을 권장
+		 
